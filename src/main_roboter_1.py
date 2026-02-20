@@ -1,10 +1,7 @@
-from kipr.wombat import *
-import socket
-import fcntl
-import os
-import errno
-import struct
-
+#!/usr/bin/python3
+import socket, sys, os, fcntl, errno, struct
+sys.path.append("/usr/lib")
+from _kipr import *
 PORT = 8080
 
 SENSOR_LEFT = 0
@@ -19,7 +16,6 @@ SERVO_CLAW = 2
 
 BASE_SPEED = 100
 
-THRESHOLD = 2700
 ONE_METER_THRESHOLD = -9000
 
 DEG_180_TIME = 2275
@@ -31,7 +27,7 @@ CLAWS_CLOSE_POS = 2047
 EXTENDER_HIGH_POS = 850
 EXTENDER_LOW_POS = 1800
 
-INVERT = -1
+THRESHOLD = 2700
 
 def is_white(sensor):
     return analog(sensor) < THRESHOLD
@@ -39,13 +35,14 @@ def is_white(sensor):
 def is_black(sensor):
     return analog(sensor) >= THRESHOLD
 
+
 def xmotor(left_speed, right_speed):
-    motor(MOTOR_LEFT, left_speed * INVERT)
-    motor(MOTOR_RIGHT, right_speed * INVERT)
+    motor(MOTOR_LEFT, left_speed)
+    motor(MOTOR_RIGHT, right_speed)
 
 def xmav(left_speed, right_speed):
-    mav(MOTOR_LEFT, left_speed * INVERT)
-    mav(MOTOR_RIGHT, right_speed * INVERT)
+    mav(MOTOR_LEFT, left_speed)
+    mav(MOTOR_RIGHT, right_speed)
 
 def forward(base_speed):
     xmotor(base_speed, base_speed)
@@ -178,20 +175,7 @@ def get_message(new_socket):
     return None
 
 def main():
-    start_servos()
-    move_for_m(0.45, 100, forward)
-    turn_deg(-90)
-    move_for_m(0.25, 100, follow_line)
-    extender_down()
-    move_for_m(0.3, 100, follow_line)
-    close_claw()
-    extender_up()
-    turn_around()
-    move_for_m(0.5, 100, follow_line)
-    turn_deg(-90)
-    move_for_m(0.20, 100, forward)
-    lower_arm()
-    open_claw()
-
-if __name__ == "__main__":
-    main()
+    while True:
+        forward(100)
+    
+main()
